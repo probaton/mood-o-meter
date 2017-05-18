@@ -1,0 +1,11 @@
+{
+  "name": "moodometer",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Dexx <dexx.van.der.mandele@mendix.com>",
+  "license": "MIT",
+  "dependencies": {
+    "ts-node": "^3.0.4",
+    "typescript": "^2.3.2"
+  }
+}
