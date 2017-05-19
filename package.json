@@ -5,6 +5,7 @@
   "author": "Dexx <dexx.van.der.mandele@mendix.com>",
   "license": "MIT",
   "dependencies": {
+    "@types/node": "^7.0.18",
     "ts-node": "^3.0.4",
     "typescript": "^2.3.2"
   }
