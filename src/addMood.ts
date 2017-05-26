@@ -1,51 +1,25 @@
-import { Psylog, Psyline } from "./Psylog";
+import { MooDay, MoodEntry, parseMoodOMeter, getMooDayForToday } from "./Psylog";
 import { writeFile } from "fs";
-import { createInterface, ReadLine } from "readline";
+import { LineReader, ask, askAgain } from "./ask";
 
-
-function getTodayInMs(): number {
-    const msInDay = 1000 * 60 * 60 * 24;
-    const now = Date.now();
-    return now - (now % msInDay);
+function writeToFile(period: number): void {
+    const logs: MooDay[] = parseMoodOMeter();
+    console.log(">>>> the logs", logs);
+    const log = getMooDayForToday(logs);
+    console.log(">>>> entries before", log.entries);
+    log.createEntry(period);
+    console.log(">>>> entries after", log.entries);
+    writeFile("data/psylog.json", JSON.stringify(logs));
 }
 
-function getPsylogForToday(logs: Psylog[]): Psylog {
-    const today = getTodayInMs();
-    for (const log of logs) {
-        if (log.date === today) { return log; }
-    }
-    let newLog = new Psylog();
-    newLog.date = today;
-    return newLog;
-}
+function stringToNumber(string: string) { return +string }
 
-function checkPeriodInput(periodInput: any, readLine: ReadLine): number {
-    const inputNr = +periodInput;
-    console.log(periodInput.length);
-    if (periodInput.length > 1 || inputNr > 4 || isNaN(inputNr)) {
-        readLine.question("Please to submit valid period ", (input) => {
-            checkPeriodInput(input, readLine);
-        });
-    } else {
-        readLine.close();
-        return inputNr;
-    }
-}
 
-const logs: Psylog[] = require("../data/psylog");
-let logForToday = getPsylogForToday(logs);
-let logLine = new Psyline();
-
-const readLine = createInterface({
-    input: process.stdin,
-    output: process.stdout
-})
-
-readLine.question("Entry period (1-4 = night-morning) ", (input) => {
-    const period = checkPeriodInput(input, readLine);
-    logLine.period = period;
-});
-
-console.log(logLine.period);
-logForToday.entries.push(logLine);
-writeFile("data/psylog.json", JSON.stringify(logs));
+ask("Entry period (1-4 = night-morning) ", new LineReader())
+    .then((answer) => {
+        console.log(">>>> answer", answer);
+        return answer;
+    })
+    .then(stringToNumber)
+    .then(writeToFile)
+    .catch((e) => console.log("Ask chain failed: ", e));
