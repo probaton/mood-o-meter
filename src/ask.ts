@@ -1,10 +1,16 @@
 import { createInterface, ReadLine } from "readline";
 
-export class LineReader {
+export class Interrogator {
+    question: string;
+    validationMessage: string;
+    condition: Condition;
     readLine: ReadLine;
     input: string;
 
-    constructor() {
+    constructor(question: string, condition: Condition, validationMessage: string) {
+        this.question = question;
+        this.validationMessage = validationMessage;
+        this.condition = condition;
         this.readLine = createInterface({
             input: process.stdin,
             output: process.stdout
@@ -12,52 +18,47 @@ export class LineReader {
     }
 }
 
-function returnLineReaderInput(lineReader: LineReader): string {
-    return lineReader.input;
-}
-
-function closeReadLine(lineReader: LineReader): LineReader {
-    lineReader.readLine.close();
-    return lineReader;
-}
-
-async function checkPeriod(lineReader: LineReader) {
-    const inputNr = +lineReader.input;
-    if (inputNr > 4 || isNaN(inputNr)) {
-        return askAgain(lineReader);
+function validateAnswer(interrogator: Interrogator) {
+    if (interrogator.condition(interrogator.input)) {
+        return askAgain(interrogator);
     } else {
-        return lineReader;
+        return interrogator;
     }
-};
+}
 
-export async function askAgain(lineReader: LineReader): Promise<LineReader> {
-    const answer = new Promise<LineReader>((resolve) => {
-        lineReader.readLine.question("Submit a valid period ", (answer) => {
-            lineReader.input = answer;
-            resolve(lineReader);
+async function askAgain(interrogator: Interrogator): Promise < Interrogator > {
+    const answer = new Promise<Interrogator>((resolve) => {
+        interrogator.readLine.question(interrogator.validationMessage, (answer) => {
+            interrogator.input = answer;
+            resolve(interrogator);
         });
     });
 
     return answer
-        .then(checkPeriod)
-        .then(closeReadLine);
+        .then(validateAnswer)
 };
 
-export async function ask(question: string, lineReader: LineReader): Promise<string> {
-    const answer = new Promise<LineReader>((resolve) => {
-        lineReader.readLine.question(question, (answer) => {
-            let inputNr = +answer;
-            if (inputNr > 4 || isNaN(inputNr)) {
-                lineReader.input = answer;
-                resolve(askAgain(lineReader));
-            } else {
-                lineReader.input = answer;
-                resolve(lineReader);
-            }
+export async function ask(interrogator: Interrogator): Promise < string > {
+    const answer = new Promise<Interrogator>((resolve) => {
+        interrogator.readLine.question(interrogator.question, (answer) => {
+            interrogator.input = answer;
+            resolve(interrogator);
         });
     });
 
     return answer
+        .then(validateAnswer)
         .then(closeReadLine)
         .then(returnLineReaderInput);
 }
+
+function returnLineReaderInput(interrogator: Interrogator): string {
+    return interrogator.input;
+}
+
+function closeReadLine(interrogator: Interrogator): Interrogator {
+    interrogator.readLine.close();
+    return interrogator;
+}
+
+export type Condition = (answer: string) => boolean;

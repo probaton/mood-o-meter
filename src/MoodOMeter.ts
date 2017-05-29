@@ -45,7 +45,6 @@ export class MoodOMeter {
         }
     }
 }
-    
 
 class MooDay implements IMooDay {
     date: number;

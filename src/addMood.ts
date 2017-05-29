@@ -1,6 +1,6 @@
 import { MoodOMeter, getMoodOMeter } from "./MoodOMeter";
 import { writeFile } from "fs";
-import { LineReader, ask, askAgain } from "./ask";
+import { Interrogator, ask } from "./ask";
 
 function writeToFile(period: number): void {
     const moodOMeter = getMoodOMeter();
@@ -12,8 +12,14 @@ function writeToFile(period: number): void {
 
 function stringToNumber(string: string) { return +string }
 
+function checkPeriod(answer): boolean {
+    const numericAnswer = +answer;
+    return (isNaN(numericAnswer) || numericAnswer > 4);
+};
 
-ask("Entry period (1-4 = night-morning) ", new LineReader())
+const interrogator = new Interrogator("Entry period (1-4 = night-morning) ", checkPeriod, "Submit a valid period ");
+
+ask(interrogator)
     .then(stringToNumber)
     .then(writeToFile)
     .then(getMoodOMeter)
