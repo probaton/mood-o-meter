@@ -1,4 +1,3 @@
-
 import { createInterface, ReadLine } from "readline";
 
 export class LineReader {
@@ -6,13 +5,11 @@ export class LineReader {
     input: string;
 
     constructor() {
-        const readLine = createInterface({
+        this.readLine = createInterface({
             input: process.stdin,
             output: process.stdout
         });
-        this.readLine = readLine;
     }
-
 }
 
 function returnLineReaderInput(lineReader: LineReader): string {
