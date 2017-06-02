@@ -1,3 +1,5 @@
+import { Interrogator } from "./Interrogator";
+
 interface IMooDay {
     date: number;
     entries: MoodEntry[];
@@ -18,7 +20,7 @@ export class MoodOMeter {
         rawRecords.forEach((log) => {
             const mooDay = new MooDay(log.date);
             log.entries.forEach((entry) => {
-                const moodEntry = new MoodEntry(entry.period);
+                const moodEntry = new MoodEntry();
                 moodEntry.activities = entry.activities;
                 moodEntry.moodRating = entry.moodRating;
                 mooDay.entries.push(moodEntry);
@@ -46,7 +48,7 @@ export class MoodOMeter {
     }
 }
 
-class MooDay implements IMooDay {
+export class MooDay implements IMooDay {
     date: number;
     entries: MoodEntry[];
 
@@ -55,19 +57,17 @@ class MooDay implements IMooDay {
         this.entries = [];
     }
 
-    createEntry(period: number) {
-        this.entries.push(new MoodEntry(period));
+    createEntry() {
+        const entry = new MoodEntry();
+        this.entries.push(entry);
+        return entry;
     }
 }
 
-class MoodEntry implements IMoodEntry {
+export class MoodEntry implements IMoodEntry {
     period: number;
     moodRating: number;
     activities: string[];
-
-    constructor(period: number) {
-        this.period = period;
-    }
 }
 
 

@@ -1,27 +1,42 @@
 import { MoodOMeter, getMoodOMeter } from "./MoodOMeter";
 import { writeFile } from "fs";
-import { Interrogator, ask } from "./ask";
+import { openInterrogation, closeReadLine, getEntry, setEntryMoodRating, setEntryPeriod, addEntryActivity } from "./Interrogator";
 
 function writeToFile(period: number): void {
     const moodOMeter = getMoodOMeter();
     const today = moodOMeter.getToday();
-    today.createEntry(period);
-    
+    today.createEntry();
+
     writeFile("data/moodometer.json", JSON.stringify(moodOMeter.records));
 }
 
-function stringToNumber(string: string) { return +string }
+function isNumberBetween(input: string, lowerLimit: number, upperLimit: number): boolean {
+    const numericInput = +input; 
+    return (!isNaN(numericInput) && numericInput >= lowerLimit && numericInput <= upperLimit);
+}
 
-function checkPeriod(answer): boolean {
-    const numericAnswer = +answer;
-    return (isNaN(numericAnswer) || numericAnswer > 4);
-};
-
-const interrogator = new Interrogator("Entry period (1-4 = night-morning) ", checkPeriod, "Submit a valid period ");
-
-ask(interrogator)
-    .then(stringToNumber)
-    .then(writeToFile)
-    .then(getMoodOMeter)
-    .then((mooDays) => { console.log(">>>> read again", mooDays); })
+openInterrogation()
+    .then(getEntry)
+    .then((interrogator) => {
+        return interrogator.ask(
+            "Entry period (1-4 = night-morning)",
+            "Submit a valid period",
+            (answer) => {
+                return isNumberBetween(answer, 1, 4);
+            }
+        );
+    })
+    .then(setEntryPeriod)
+    .then((interrogator) => {
+        return interrogator.ask(
+            "Rate your mood (1-10)",
+            "Submit a valid mood rating",
+            (answer) => {
+                return isNumberBetween(answer, 1, 10);
+            }
+        );
+    })
+    .then(setEntryMoodRating)
+    .then(closeReadLine)
+    .then((interrogator) => { console.log(">>>> entry", interrogator.entry); })
     .catch((e) => console.log("Ask chain failed: ", e));
