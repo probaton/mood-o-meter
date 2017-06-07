@@ -3,6 +3,7 @@ import { Query, Condition } from "./Query";
 import { MoodOMeter, MoodEntry, getMoodOMeter } from "./MoodOMeter";
 import { writeFile } from "fs";
 import { getTodayInMs } from "./MoodOMeter";
+import { uploadJsonToGDrive } from "./gdrive/uploadFile";
 
 export class Interrogator {
     query: Query;
@@ -94,6 +95,13 @@ export async function openInterrogation(): Promise<Interrogator> {
 }
 
 export function writeToFile(interrogator: Interrogator): void {
+    const versionedFileName = `moodometer${getTodayInMs()}.json`;
     writeFile("data/moodometer.json", JSON.stringify(interrogator.moodOMeter.records));
-    writeFile(`data/moodometer${getTodayInMs()}.json`, JSON.stringify(interrogator.moodOMeter.records));
+    writeFile("data/" + versionedFileName, JSON.stringify(interrogator.moodOMeter.records), (err, res) => {
+        if (err) {
+            console.log("Writing versioned json file failed:", err);
+        } else {
+            uploadJsonToGDrive(versionedFileName, "data/");
+        }
+    });
 }

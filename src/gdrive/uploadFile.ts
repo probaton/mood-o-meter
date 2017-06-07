@@ -3,19 +3,22 @@ import * as gAuth from "google-auth-library";
 import { handleCallback, callApi } from "./gdrive";
 import { createReadStream } from "fs";
 
-callApi(uploadFile);
+export function uploadJsonToGDrive(fileName, filePath) {
+    callApi((drive) => {
+        uploadJson(drive, fileName, filePath); 
+    });
+}
 
-
-function uploadFile(drive) {
+function uploadJson(drive, fileName, filePath) {
     const moodOMeterFolderId = "0B0Cu1R5HusBldjUtUkNsVmNpamc";
     drive.files.create({
         resource: {
             parents: [ moodOMeterFolderId ],
-            name: "MoodOMeter1.json"
+            name: fileName
         },
         media: {
             mimeType: "application/json",
-            body: createReadStream(process.cwd() + "/data/moodometer.json")
+            body: createReadStream(filePath + fileName)
         }
     }, (err, res) => {
         handleCallback(err, "Uploading file failed");
