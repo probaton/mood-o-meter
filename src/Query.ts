@@ -6,8 +6,8 @@ export class Query {
     condition: Condition;
 
     constructor(question: string, validationMessage: string, condition: Condition) {
-        this.question = question + " ";
-        this.validationMessage = validationMessage + " ";
+        this.question = question + ": ";
+        this.validationMessage = validationMessage + ": ";
         this.condition = condition;
     }
 }

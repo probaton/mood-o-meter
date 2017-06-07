@@ -1,13 +1,10 @@
-import { MoodOMeter, getMoodOMeter } from "./MoodOMeter";
+import { getTodayInMs } from "./MoodOMeter";
 import { writeFile } from "fs";
-import { openInterrogation, closeReadLine, setEntryMoodRating, setEntryPeriod, addEntryActivity } from "./Interrogator";
+import { Interrogator, openInterrogation, closeReadLine, setEntryMoodRating, setEntryPeriod, setEntryActivities } from "./Interrogator";
 
-function writeToFile(period: number): void {
-    const moodOMeter = getMoodOMeter();
-    const today = moodOMeter.getToday();
-    today.createEntry();
-
-    writeFile("data/moodometer.json", JSON.stringify(moodOMeter.records));
+function writeToFile(interrogator: Interrogator): void {
+    writeFile("data/moodometer.json", JSON.stringify(interrogator.moodOMeter.records));
+    writeFile(`data/moodometer${getTodayInMs()}.json`, JSON.stringify(interrogator.moodOMeter.records));
 }
 
 function isNumberBetween(input: string, lowerLimit: number, upperLimit: number): boolean {
@@ -35,11 +32,17 @@ function askMoodRating(interrogator) {
     );
 }
 
+function askActivities(interrogator: Interrogator) {
+    return interrogator.ask("List what you were doing, separating activities by commas");
+}
+
 openInterrogation()
     .then(askPeriod)
     .then(setEntryPeriod)
     .then(askMoodRating)
     .then(setEntryMoodRating)
+    .then(askActivities)
+    .then(setEntryActivities)
     .then(closeReadLine)
-    .then((interrogator) => { console.log(">>>> entry", interrogator.entry); })
+    .then(writeToFile)
     .catch((e) => console.log("Ask chain failed: ", e));

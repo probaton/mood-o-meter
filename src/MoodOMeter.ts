@@ -23,6 +23,7 @@ export class MoodOMeter {
                 const moodEntry = new MoodEntry();
                 moodEntry.activities = entry.activities;
                 moodEntry.moodRating = entry.moodRating;
+                moodEntry.period = entry.period;
                 mooDay.entries.push(moodEntry);
             });
             this.records.push(mooDay);
@@ -71,7 +72,7 @@ export class MoodEntry implements IMoodEntry {
 }
 
 
-function getTodayInMs(): number {
+export function getTodayInMs(): number {
     const msInDay = 1000 * 60 * 60 * 24;
     const now = Date.now();
     return now - (now % msInDay);
