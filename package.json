@@ -4,6 +4,9 @@
   "main": "index.js",
   "author": "Dexx <dexx.van.der.mandele@mendix.com>",
   "license": "MIT",
+  "scripts": {
+    "mood": "ts-node src/addMood.ts"
+  },
   "dependencies": {
     "@types/node": "^7.0.18",
     "google-auth-library": "^0.10.0",
