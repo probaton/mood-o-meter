@@ -6,9 +6,9 @@ callApi(uploadFile);
 
 function uploadFile(drive) {
     drive.files.create({
-        parents: [{ id: "0B0Cu1R5HusBlajVaUG1ia2l1Q1k" }],
         resource: {
-            name: "BAAFlarble",
+            parents: [ "0B0Cu1R5HusBldjUtUkNsVmNpamc" ],
+            name: "CAAFlarble",
             mimeType: "text/plain",
         },
         media: {

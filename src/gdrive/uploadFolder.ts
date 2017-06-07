@@ -7,12 +7,8 @@ callApi(uploadFolder);
 function uploadFolder(drive) {
     drive.files.create({
         resource: {
-            title: "MoodOMeter",
+            name: "MoodOMeter",
             mimeType: "application/vnd.google-apps.folder",
-        },
-        media: {
-            title: "MoodOMeter",
-            name: "stuffles"
         },
         fields: "id"
     }), (err, res) => {
