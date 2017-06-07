@@ -21,9 +21,9 @@ export class MoodOMeter {
             const mooDay = new MooDay(log.date);
             log.entries.forEach((entry) => {
                 const moodEntry = new MoodEntry();
-                moodEntry.activities = entry.activities;
-                moodEntry.moodRating = entry.moodRating;
                 moodEntry.period = entry.period;
+                moodEntry.moodRating = entry.moodRating;
+                moodEntry.activities = entry.activities;
                 mooDay.entries.push(moodEntry);
             });
             this.records.push(mooDay);

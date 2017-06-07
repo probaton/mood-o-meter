@@ -1,6 +1,8 @@
 import { createInterface, ReadLine } from "readline";
 import { Query, Condition } from "./Query";
 import { MoodOMeter, MoodEntry, getMoodOMeter } from "./MoodOMeter";
+import { writeFile } from "fs";
+import { getTodayInMs } from "./MoodOMeter";
 
 export class Interrogator {
     query: Query;
@@ -89,4 +91,9 @@ export function closeReadLine(interrogator: Interrogator): Interrogator {
 
 export async function openInterrogation(): Promise<Interrogator> {
     return new Interrogator();
+}
+
+export function writeToFile(interrogator: Interrogator): void {
+    writeFile("data/moodometer.json", JSON.stringify(interrogator.moodOMeter.records));
+    writeFile(`data/moodometer${getTodayInMs()}.json`, JSON.stringify(interrogator.moodOMeter.records));
 }

@@ -1,11 +1,4 @@
-import { getTodayInMs } from "./MoodOMeter";
-import { writeFile } from "fs";
-import { Interrogator, openInterrogation, closeReadLine, setEntryMoodRating, setEntryPeriod, setEntryActivities } from "./Interrogator";
-
-function writeToFile(interrogator: Interrogator): void {
-    writeFile("data/moodometer.json", JSON.stringify(interrogator.moodOMeter.records));
-    writeFile(`data/moodometer${getTodayInMs()}.json`, JSON.stringify(interrogator.moodOMeter.records));
-}
+import { Interrogator, openInterrogation, closeReadLine, setEntryMoodRating, setEntryPeriod, setEntryActivities, writeToFile } from "./Interrogator";
 
 function isNumberBetween(input: string, lowerLimit: number, upperLimit: number): boolean {
     const numericInput = +input;
