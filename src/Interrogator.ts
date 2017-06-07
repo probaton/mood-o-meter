@@ -14,6 +14,8 @@ export class Interrogator {
             input: process.stdin,
             output: process.stdout
         });
+        this.moodOMeter = getMoodOMeter();
+        this.entry = this.moodOMeter.getToday().createEntry();
     }
 
     ask(question: string, validationMessage: string, condition: Condition): Promise<Interrogator> {
@@ -49,12 +51,12 @@ export class Interrogator {
             })
             .then((interrogator) => {
                 return new Promise<Interrogator>((resolve) => {
-                this.readLine.question(interrogator.query.question, (answer) => {
-                    this.input = answer;
-                    resolve(this);
+                    this.readLine.question(interrogator.query.question, (answer) => {
+                        this.input = answer;
+                        resolve(this);
+                    });
                 });
             });
-        });
 
         return answer
             .then(validateAnswer);
@@ -73,12 +75,6 @@ export function setEntryMoodRating(interrogator: Interrogator): Interrogator {
 
 export function addEntryActivity(interrogator: Interrogator): Interrogator {
     interrogator.entry.activities.push(interrogator.input);
-    return interrogator;
-}
-
-export function getEntry(interrogator: Interrogator) {
-    interrogator.moodOMeter = getMoodOMeter();
-    interrogator.entry = interrogator.moodOMeter.getToday().createEntry();
     return interrogator;
 }
 
