@@ -29,22 +29,24 @@ export class MoodOMeter {
             this.records.push(mooDay);
         });
     }
-    
-    getDay(date: number): MooDay {
-        let result: MooDay;
+
+    createDay(date: number): MooDay {
+        let newLog = new MooDay(date);
+        this.records.push(newLog);
+        return newLog;
+    }
+
+    retrieveDay(date: number): MooDay {
         for (const record of this.records) {
             if (record.date === date) {
-                result = record;
+                return record;
             }
         }
-        
-        if (result) {
-            return result; 
-        } else {
-            let newLog = new MooDay(date);
-            this.records.push(newLog);
-            return newLog;
-        }
+    }
+
+    getDay(date: number): MooDay {
+        const day = this.retrieveDay(date);
+        return day ? day : this.createDay(date);
     }
 }
 

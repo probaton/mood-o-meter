@@ -5,7 +5,8 @@
   "author": "Dexx <dexx.van.der.mandele@mendix.com>",
   "license": "MIT",
   "scripts": {
-    "mood": "ts-node src/addMood.ts"
+    "mood": "ts-node src/addMood.ts",
+    "getmood": "ts-node src/retrieveEntry.ts"
   },
   "dependencies": {
     "@types/node": "^7.0.18",

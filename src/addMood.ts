@@ -1,20 +1,5 @@
 import { Interrogator, openInterrogation, closeReadLine, setEntryMoodRating, setEntryPeriod, setEntryActivities, writeToFile } from "./Interrogator";
-
-function processInput(): number {
-    let dateByReverseIndex = 0;
-    const input = process.argv[2];
-    if (input) {
-        const numericInput = +input;
-        if (isNaN(numericInput)) {
-            console.log("Input parameter should represent the number of days past since the to-be-submitted entry");
-            process.exit(1);
-        } else {
-            dateByReverseIndex = numericInput;
-        }
-    }
-
-    return dateByReverseIndex;
-}
+import { getDateByReverseIndexFromInput } from "./processInput";
 
 function isNumberBetween(input: string, lowerLimit: number, upperLimit: number): boolean {
     const numericInput = +input;
@@ -45,7 +30,7 @@ function askActivities(interrogator: Interrogator): Promise<Interrogator> {
     return interrogator.ask("List what you were doing, separating activities by commas");
 }
 
-const dateByReverseIndex = processInput();
+const dateByReverseIndex = getDateByReverseIndexFromInput();
 
 openInterrogation(dateByReverseIndex)
     .then(askPeriod)

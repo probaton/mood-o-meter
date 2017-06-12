@@ -71,7 +71,7 @@ export class Interrogator {
     }
 }
 
-function getDateInMs(dateByReverseIndex: number): number {
+export function getDateInMs(dateByReverseIndex: number): number {
     const msInDay = 1000 * 60 * 60 * 24;
     const now = Date.now();
     const startOfDay = now - (now % msInDay);
