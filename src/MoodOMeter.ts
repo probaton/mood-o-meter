@@ -30,11 +30,10 @@ export class MoodOMeter {
         });
     }
     
-    getToday(): MooDay {
-        const today = getTodayInMs();
+    getDay(date: number): MooDay {
         let result: MooDay;
         for (const record of this.records) {
-            if (record.date === today) {
+            if (record.date === date) {
                 result = record;
             }
         }
@@ -42,7 +41,7 @@ export class MoodOMeter {
         if (result) {
             return result; 
         } else {
-            let newLog = new MooDay(today);
+            let newLog = new MooDay(date);
             this.records.push(newLog);
             return newLog;
         }
@@ -71,15 +70,6 @@ export class MoodEntry implements IMoodEntry {
     activities: string[];
 }
 
-
-export function getTodayInMs(): number {
-    const msInDay = 1000 * 60 * 60 * 24;
-    const now = Date.now();
-    return now - (now % msInDay);
-}
-
 export function getMoodOMeter(): MoodOMeter {
     return new MoodOMeter();
 }
-
-

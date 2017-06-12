@@ -2,7 +2,6 @@ import { createInterface, ReadLine } from "readline";
 import { Query, Condition } from "./Query";
 import { MoodOMeter, MoodEntry, getMoodOMeter } from "./MoodOMeter";
 import { writeFile } from "fs";
-import { getTodayInMs } from "./MoodOMeter";
 import { uploadJsonToGDrive } from "./gdrive/uploadFile";
 
 export class Interrogator {
@@ -11,14 +10,16 @@ export class Interrogator {
     entry: MoodEntry;
     readLine: ReadLine;
     input: string;
+    date: number;
 
-    constructor() {
+    constructor(dateByReverseIndex: number) {
         this.readLine = createInterface({
             input: process.stdin,
             output: process.stdout
         });
+        this.date = getDateInMs(dateByReverseIndex);
         this.moodOMeter = getMoodOMeter();
-        this.entry = this.moodOMeter.getToday().createEntry();
+        this.entry = this.moodOMeter.getDay(this.date).createEntry();
     }
 
     ask(question: string, validationMessage?: string, condition?: Condition): Promise<Interrogator> {
@@ -70,6 +71,13 @@ export class Interrogator {
     }
 }
 
+function getDateInMs(dateByReverseIndex: number): number {
+    const msInDay = 1000 * 60 * 60 * 24;
+    const now = Date.now();
+    const startOfDay = now - (now % msInDay);
+    return startOfDay - (msInDay * dateByReverseIndex);
+}
+
 export function setEntryPeriod(interrogator: Interrogator): Interrogator {
     interrogator.entry.period = +interrogator.input;
     return interrogator;
@@ -90,12 +98,12 @@ export function closeReadLine(interrogator: Interrogator): Interrogator {
     return interrogator;
 }
 
-export async function openInterrogation(): Promise<Interrogator> {
-    return new Interrogator();
+export async function openInterrogation(dateByReverseIndex: number): Promise<Interrogator> {
+    return new Interrogator(dateByReverseIndex);
 }
 
 export function writeToFile(interrogator: Interrogator): void {
-    const versionedFileName = `moodometer${getTodayInMs()}.json`;
+    const versionedFileName = `moodometer${interrogator.date}.json`;
     writeFile("data/moodometer.json", JSON.stringify(interrogator.moodOMeter.records));
     writeFile("data/" + versionedFileName, JSON.stringify(interrogator.moodOMeter.records), (err, res) => {
         if (err) {
